@@ -4,6 +4,7 @@ const fs = require("fs");
 const bootstrap = fs.readFileSync("app/example_emscripten_opengl3.js", "utf8");
 const GL = require("gl");
 const PNG = require("pngjs").PNG;
+const performance = require('perf_hooks').performance;
 
 const nav = {};
 const doc = {};
@@ -120,8 +121,7 @@ wnd.requestAnimationFrame = function(cb){
     console.log("rAF");
     process.nextTick(async function(){
         await sleep(100);
-        //const now = w.performance.now();
-        const now = 0;
+        const now = performance.now();
         console.log("RAF", now);
         cb(now);
         update_screenshot();
@@ -133,8 +133,7 @@ function fake_settimeout(cb, ms){
     console.log("sTO", cb, ms);
     process.nextTick(async function(){
         await sleep(ms);
-        //const now = w.performance.now();
-        const now = 0;
+        const now = performance.now();
         console.log("FRAME", now);
         cb();
         update_screenshot();
