@@ -1,12 +1,16 @@
 
 const process = require("process");
 const fs = require("fs");
-const bootstrap = fs.readFileSync("app/example_emscripten_opengl3.js");
-const HappyDom = require("happy-dom");
+const bootstrap = fs.readFileSync("app/example_emscripten_opengl3.js", "utf8");
 const GL = require("gl");
 const PNG = require("pngjs").PNG;
 
-const wnd = new HappyDom.Window();
+const nav = {};
+const doc = {};
+const wnd = {};
+
+wnd.document = doc;
+wnd.navigator = nav;
 
 function sleep(ms){
     return new Promise((res) => setTimeout(res, ms));
@@ -62,6 +66,10 @@ function fake_fetch(path, opts) {
 
 // Emscripten patches
 
+function fake_aEL(typ, lis, usecapture){
+    console.log("Add Event Listender", typ, lis, usecapture);
+}
+
 const my_canvas = {
     style: {
         cursor: "bogus"
@@ -78,9 +86,7 @@ const my_canvas = {
             height: 720
         };
     },
-    addEventListener: function(typ, lis, usecapture){
-        console.log("Add Event Listender", typ, lis, usecapture);
-    },
+    addEventListener: fake_aEL,
     getContext: function(type,attr){
         console.log("Draw context", type, attr);
         if(type == "webgl"){
@@ -148,10 +154,10 @@ function fake_queryselector(tgt){
 }
 
 wnd.document.querySelector = fake_queryselector;
+wnd.document.addEventListener = fake_aEL; // specialHTMLTargets[1]
+wnd.addEventListener = fake_aEL; // specialHTMLTargets[2]
 
 // Boot
-const scr = wnd.document.createElement("script");
-
 global.my_window = wnd;
 global.my_fetch = fake_fetch;
 global.my_doc = wnd.document;
@@ -159,7 +165,9 @@ global.my_module = my_module;
 global.my_screen = my_screen;
 global.fake_settimeout = fake_settimeout;
 
-scr.textContent = "var window = global.my_window; var navigator = window.navigator; var fetch = global.my_fetch; var document = global.my_doc; var Module = global.my_module; var screen = global.my_screen; var setTimeout = global.fake_settimeout; \n" + bootstrap;
-wnd.document.head.appendChild(scr);
+function boot(){
+    eval("var window = global.my_window; var navigator = window.navigator; var fetch = global.my_fetch; var document = global.my_doc; var Module = global.my_module; var screen = global.my_screen; var setTimeout = global.fake_settimeout; \n" + bootstrap);
+}
 
+boot();
 
