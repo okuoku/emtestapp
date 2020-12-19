@@ -166,7 +166,14 @@ global.my_screen = my_screen;
 global.fake_settimeout = fake_settimeout;
 
 function boot(){
-    eval("var window = global.my_window; var navigator = window.navigator; var fetch = global.my_fetch; var document = global.my_doc; var Module = global.my_module; var screen = global.my_screen; var setTimeout = global.fake_settimeout; \n" + bootstrap);
+    let window = global.my_window;
+    let navigator = window.navigator;
+    let fetch = global.my_fetch;
+    let document = global.my_doc;
+    var Module = global.my_module;
+    let screen = global.my_screen;
+    let setTimeout = global.fake_settimeout;
+    eval(bootstrap);
 }
 
 boot();
