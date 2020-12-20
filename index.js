@@ -1,8 +1,6 @@
 
 const process = require("process");
 const fs = require("fs");
-//const bootstrap = fs.readFileSync("app/example_emscripten_opengl3.js", "utf8");
-const bootstrap = fs.readFileSync("app2/gltest2.framework.js", "utf8");
 const GL = require("gl");
 const PNG = require("pngjs").PNG;
 const indexedDB = require("fake-indexeddb");
@@ -213,8 +211,8 @@ global.my_module = my_module;
 global.my_screen = my_screen;
 global.fake_settimeout = fake_settimeout;
 
-/*
 function boot(){ // Emscripten plain
+    const bootstrap = fs.readFileSync("app/example_emscripten_opengl3.js", "utf8");
     let window = global.my_window;
     let navigator = window.navigator;
     let fetch = global.my_fetch;
@@ -224,9 +222,10 @@ function boot(){ // Emscripten plain
     let setTimeout = global.fake_settimeout;
     eval(bootstrap);
 }
-*/
 
+/*
 function boot(){ // Unity
+    const bootstrap = fs.readFileSync("app2/gltest2.framework.js", "utf8");
     // Unity preload
     function cb_injectdata(data) { // From Unity 2020.1
         let view = new DataView(data.buffer, data.byteOffset, data.byteLength);
@@ -279,6 +278,7 @@ function boot(){ // Unity
     let init = global.initfunc;
     init(global.my_module);
 }
+*/
 
 boot();
 
